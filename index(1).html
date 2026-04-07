@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Para Você ❤️</title>
+
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+}
+
+h2, h3, p {
+    color: white;
+}
+
+.box {
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    margin: 20px 0;
+    min-height: 80px;
+}
+
+.word {
+    display: inline-block;
+    padding: 10px 14px;
+    margin: 5px;
+    background: #ff6b81;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.word:active {
+    transform: scale(0.95);
+}
+
+#message {
+    font-size: 22px;
+    color: white;
+    margin-top: 20px;
+    display: none;
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="box" id="words"></div>
+
+    <p><strong>Para descobrir, coloque nesta ordem:</strong><br>
+    5, 6, 7, 8, 9, 4, 1</p>
+    <div class="box" id="result"></div>
+
+    <div id="message">Te amo, feliz nosso dia! ❤️</div>
+</div>
+
+<script>
+const wordsList = [
+    { id: 1, text: "1. Você" },
+    { id: 2, text: "2. sabe" },
+    { id: 3, text: "3. qual" },
+    { id: 4, text: "4. é" },
+    { id: 5, text: "5. a" },
+    { id: 6, text: "6. garota" },
+    { id: 7, text: "7. mais" },
+    { id: 8, text: "8. linda" },
+    { id: 9, text: "9. do mundo" }
+];
+
+// ORDEM CORRETA
+const correctOrder = [5, 6, 7, 8, 9, 4, 1];
+
+const wordsContainer = document.getElementById("words");
+const resultContainer = document.getElementById("result");
+const message = document.getElementById("message");
+
+// criar palavras (sem embaralhar)
+wordsList.forEach(word => {
+    const div = document.createElement("div");
+    div.classList.add("word");
+    div.innerText = word.text;
+    div.dataset.id = word.id;
+
+    div.onclick = () => moveToResult(div);
+
+    wordsContainer.appendChild(div);
+});
+
+function moveToResult(el) {
+    el.onclick = () => moveBack(el);
+    resultContainer.appendChild(el);
+    checkOrder();
+}
+
+function moveBack(el) {
+    el.onclick = () => moveToResult(el);
+    wordsContainer.appendChild(el);
+}
+
+// verificar ordem
+function checkOrder() {
+    const current = [...resultContainer.children].map(el => Number(el.dataset.id));
+
+    if (JSON.stringify(current) === JSON.stringify(correctOrder)) {
+        // remove apenas palavras não utilizadas
+        wordsContainer.innerHTML = "";
+
+        // desativa cliques nas palavras (travar frase)
+        [...resultContainer.children].forEach(el => {
+            el.onclick = null;
+            el.style.background = "#4CAF50"; // opcional: muda cor pra indicar acerto
+        });
+
+        // mostra mensagem final
+        message.style.display = "block";
+    }
+}
+</script>
+
+</body>
+</html>
