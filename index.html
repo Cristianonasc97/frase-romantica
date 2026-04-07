@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Frase Interativa</title>
+<style>
+    body {
+        font-family: Arial;
+        text-align: center;
+        margin-top: 50px;
+        background: #f5f5f5;
+    }
+
+    .container {
+        width: 80%;
+        margin: auto;
+    }
+
+    .words, .result {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 20px;
+        padding: 10px;
+        border: 2px dashed #ccc;
+        min-height: 60px;
+        background: white;
+    }
+
+    .word {
+        padding: 10px 15px;
+        margin: 5px;
+        background: #4CAF50;
+        color: white;
+        border-radius: 8px;
+        cursor: grab;
+    }
+
+    .word.dragging {
+        opacity: 0.5;
+    }
+
+    #message {
+        font-size: 24px;
+        color: red;
+        margin-top: 30px;
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Monte a frase</h2>
+    <p>Para descobrir, coloque nesta ordem: 5, 6, 7, 8, 9, 4, 1</p>
+
+    <div class="words" id="words"></div>
+
+    <h3>Monte aqui:</h3>
+    <div class="result" id="result"></div>
+
+    <div id="message">Te amo, feliz nosso dia! ❤️</div>
+</div>
+
+<script>
+const wordsList = [
+    { id: 1, text: "Você" },
+    { id: 2, text: "sabe" },
+    { id: 3, text: "qual" },
+    { id: 4, text: "é" },
+    { id: 5, text: "a" },
+    { id: 6, text: "garota" },
+    { id: 7, text: "mais" },
+    { id: 8, text: "linda" },
+    { id: 9, text: "do mundo" }
+];
+
+// ordem correta
+const correctOrder = [5, 6, 7, 8, 9, 4, 1];
+
+const wordsContainer = document.getElementById("words");
+const resultContainer = document.getElementById("result");
+const message = document.getElementById("message");
+
+// criar palavras
+wordsList.forEach(word => {
+    const div = document.createElement("div");
+    div.classList.add("word");
+    div.draggable = true;
+    div.innerText = word.text;
+    div.dataset.id = word.id;
+
+    div.addEventListener("dragstart", () => {
+        div.classList.add("dragging");
+    });
+
+    div.addEventListener("dragend", () => {
+        div.classList.remove("dragging");
+    });
+
+    wordsContainer.appendChild(div);
+});
+
+// permitir drop
+[resultContainer, wordsContainer].forEach(container => {
+    container.addEventListener("dragover", e => {
+        e.preventDefault();
+        const dragging = document.querySelector(".dragging");
+        container.appendChild(dragging);
+    });
+});
+
+// verificar resposta
+resultContainer.addEventListener("drop", () => {
+    const current = [...resultContainer.children].map(el => Number(el.dataset.id));
+
+    if (JSON.stringify(current) === JSON.stringify(correctOrder)) {
+        // limpar palavras não usadas
+        wordsContainer.innerHTML = "";
+
+        // montar frase final
+        resultContainer.innerHTML = "<h2>A garota mais linda do mundo é você.</h2>";
+
+        message.style.display = "block";
+    }
+});
+</script>
+
+</body>
+</html>
